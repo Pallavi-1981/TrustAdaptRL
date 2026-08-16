@@ -1,10 +1,4 @@
-Yes. I understand now.
 
-You want **the exact README content from your uploaded README document**, with **nothing added and nothing removed**. I will only change the **formatting into the single copy-pasteable GitHub README format** you showed earlier.
-
-Below is the **complete README in ONE code box**.
-
-````markdown
 # TrustAdaptRL
 
 **GitHub Repository README**
