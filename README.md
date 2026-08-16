@@ -1,6 +1,10 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21966603.svg)](https://doi.org/10.5281/zenodo.21966603)
 
+[![GitHub Repository](https://img.shields.io/badge/GitHub-TrustAdaptRL-black?logo=github)](https://github.com/Pallavi-1981/TrustAdaptRL)
 
+# TrustAdaptRL
+
+## An Online Reinforcement Learning Framework for Attack-Resilient Trust Management in Fog-IoT Networks
 
 # TrustAdaptRL
 
