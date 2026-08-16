@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/1335955211.svg)](https://doi.org/10.5281/zenodo.21966603)
 
 # TrustAdaptRL
 
