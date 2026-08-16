@@ -457,7 +457,7 @@ TrustAdaptRL/
 Clone the repository: 
 
 ```bash
-git clone https://github.com/your-username/TrustAdaptRL.git
+git clone https://github.com/Pallavi-1981/TrustAdaptRL
 cd TrustAdaptRL
 ```
 
