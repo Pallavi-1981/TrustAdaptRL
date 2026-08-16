@@ -452,7 +452,7 @@ TrustAdaptRL/
 
 # Installation
 
-Clone the repository:
+Clone the repository: 
 
 ```bash
 git clone https://github.com/your-username/TrustAdaptRL.git
