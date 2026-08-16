@@ -1,1570 +1,399 @@
-# TrustAdaptRL
-
-## TrustAdaptRL: Attack-Aware Trust, QoS, and Security Reinforcement Learning for Dynamic Fog-IoT Routing
-
-TrustAdaptRL is a reinforcement-learning-based trust-aware routing framework designed for dynamic Fog-IoT environments. The framework integrates behavioural trust, contextual information, security/anomaly information, historical stability, and neighbour correlation into a compact state representation for adaptive next-hop decision-making.
-
-The framework combines:
-
-- Dynamic clustered Fog-IoT simulation
-- Device mobility
-- Trust-aware routing
-- QoS-aware routing
-- Security-aware routing
-- Attack-aware reinforcement learning
-- Q-learning
-- Deep Q-Network (DQN)
-- Grayhole attack modelling
-- On-Off attack modelling
-- Collusion attack modelling
-- Advanced attack-robustness mechanisms
-- Fog-level policy synchronization
-- Cross-cluster knowledge transfer
-- Explainable reinforcement learning
-- Trust and routing baselines
-- Statistical evaluation
-- Computational efficiency analysis
-- Public IoT traffic replay support
-- Synthetic traffic generation
-- Reproducible experiments
-
----
-
-## 1. Overview
-
-Modern Fog-IoT networks are dynamic, distributed, resource-constrained, and vulnerable to unreliable and malicious devices. Traditional routing mechanisms may not adequately adapt to changing node behaviour, mobility, Quality of Service (QoS), and coordinated attacks.
-
-TrustAdaptRL addresses this problem by using reinforcement learning for adaptive trust management and routing decisions.
-
-For device `i` evaluating neighbour `j` at time `t`, TrustAdaptRL constructs a five-dimensional state:
-
-~~~text
-s(i,j,t) = [B_ij(t), C_ij(t), S_ij(t), H_ij(t), ρ_ij(t)]
-~~~
-
-where:
-
-~~~text
-B = Behavioural Reliability
-C = Contextual Information
-S = Security / Anomaly Information
-H = Historical Stability
-ρ = Neighbour Correlation
-~~~
-
-The learned policy is combined with trust, QoS, and security risk to support adaptive next-hop routing.
-
----
-
-## 2. Main Objective
-
-The main objective of TrustAdaptRL is to develop an adaptive and attack-aware reinforcement-learning framework for secure and QoS-aware routing in dynamic Fog-IoT environments.
-
-The framework aims to:
-
-1. Model dynamic Fog-IoT network behaviour.
-2. Represent neighbour trust using multiple behavioural and contextual features.
-3. Detect and respond to malicious forwarding behaviour.
-4. Adapt trust decisions using reinforcement learning.
-5. Integrate QoS and security into routing decisions.
-6. Improve resilience against Grayhole, On-Off, and Collusion attacks.
-7. Support Fog-level policy learning.
-8. Transfer learned knowledge between Fog clusters.
-9. Provide explainability for learned decisions.
-10. Compare the proposed approach with established trust and routing baselines.
-11. Evaluate classification, convergence, statistical, and computational performance.
-
----
-
-## 3. Key Features
-
-~~~text
-+---------------------------------------------------------------+
-|                         TrustAdaptRL                          |
-+---------------------------------------------------------------+
-|                                                               |
-| Dynamic Fog-IoT Simulation                                   |
-|              |                                                |
-|              v                                                |
-| Device Mobility                                               |
-|              |                                                |
-|              v                                                |
-| Attack Injection                                              |
-|              |                                                |
-|              v                                                |
-| Trust / QoS / Security State Construction                     |
-|              |                                                |
-|              v                                                |
-| Five-Dimensional State [B, C, S, H, ρ]                       |
-|              |                                                |
-|              v                                                |
-| Attack-Aware Reward                                           |
-|              |                                                |
-|              v                                                |
-| Reinforcement Learning                                        |
-|          /           \                                        |
-|         v             v                                       |
-|   Q-Learning          DQN                                     |
-|         \             /                                       |
-|          v           v                                        |
-| Trust-QoS-Security Routing                                    |
-|              |                                                |
-|              v                                                |
-| Fog-Level Training                                             |
-|              |                                                |
-|              v                                                |
-| Policy Synchronization                                        |
-|              |                                                |
-|              v                                                |
-| Cross-Cluster Transfer                                        |
-|              |                                                |
-|              v                                                |
-| Evaluation / Transfer / XAI / Statistical Analysis             |
-|                                                               |
-+---------------------------------------------------------------+
-~~~
-
----
-
-## 4. Framework Architecture
-
-The complete TrustAdaptRL workflow is:
-
-~~~text
-                    Public IoT Traffic
-                           |
-                           v
-              +-------------------------+
-              | Dataset Loading /       |
-              | Preprocessing           |
-              +-------------------------+
-                           |
-                           v
-              +-------------------------+
-              | Dynamic Fog-IoT         |
-              | Network Simulation      |
-              +-------------------------+
-                           |
-                           v
-              +-------------------------+
-              | Mobility + Topology     |
-              +-------------------------+
-                           |
-                           v
-              +-------------------------+
-              | Attack Manager          |
-              | Grayhole / On-Off /     |
-              | Collusion               |
-              +-------------------------+
-                           |
-                           v
-              +-------------------------+
-              | State Builder           |
-              | [B, C, S, H, ρ]        |
-              +-------------------------+
-                           |
-                           v
-              +-------------------------+
-              | Attack-Aware Reward     |
-              +-------------------------+
-                           |
-                           v
-                 +-------------------+
-                 | Reinforcement     |
-                 | Learning          |
-                 +-------------------+
-                    /             \
-                   v               v
-            +-------------+   +-------------+
-            | Q-Learning  |   | DQN         |
-            +-------------+   +-------------+
-                   \               /
-                    \             /
-                     v           v
-              +-----------------------+
-              | Trust-QoS-Security    |
-              | Routing               |
-              +-----------------------+
-                           |
-                           v
-              +-----------------------+
-              | Fog-Level Learning    |
-              +-----------------------+
-                           |
-                           v
-              +-----------------------+
-              | Policy Synchronization|
-              +-----------------------+
-                           |
-                           v
-              +-----------------------+
-              | Cross-Cluster Transfer|
-              +-----------------------+
-                           |
-                           v
-              +-----------------------+
-              | Evaluation / XAI /    |
-              | Statistical Analysis  |
-              +-----------------------+
-~~~
-
----
-
-## 5. State Representation
-
-For device `i` evaluating neighbour `j` at time `t`, TrustAdaptRL constructs a five-dimensional state.
-
-~~~text
-s(i,j,t) = [B_ij(t), C_ij(t), S_ij(t), H_ij(t), ρ_ij(t)]
-~~~
-
-The state consists of:
-
-~~~text
-+--------+-------------------------+--------------------------------------+
-| Symbol | Feature                 | Description                          |
-+--------+-------------------------+--------------------------------------+
-| B      | Behavioural Reliability  | Forwarding reliability of neighbour |
-| C      | Contextual Information   | Context-dependent information       |
-| S      | Security / Anomaly       | Anomaly-related information         |
-| H      | Historical Stability     | Historical reliability variation    |
-| ρ      | Correlation              | Correlation with other neighbours   |
-+--------+-------------------------+--------------------------------------+
-~~~
-
-### 5.1 Behavioural Reliability
-
-Behavioural reliability represents the forwarding success and drop behaviour of the evaluated neighbour.
-
-The state builder uses forwarding outcomes and smoothing mechanisms to obtain a stable reliability representation.
-
-~~~text
-B = Smoothed Forwarding Reliability
-~~~
-
-### 5.2 Contextual Information
-
-The contextual component incorporates network conditions such as:
-
-- Delay
-- Traffic conditions
-- Contextual observations
-
-The default context smoothing parameter is:
-
-~~~yaml
-context_smoothing: 0.7
-~~~
-
-### 5.3 Security / Anomaly Information
-
-The security component represents anomaly-related information.
-
-The implementation uses the anomaly score as part of the state representation:
-
-~~~text
-S = clipped anomaly_score
-~~~
-
-### 5.4 Historical Stability
-
-Historical stability represents variation in the neighbour's reliability over the observation history.
-
-The implementation uses the standard deviation of the reliability history:
-
-~~~text
-H = std(reliability_history)
-~~~
-
-### 5.5 Neighbour Correlation
-
-The correlation component represents relationships between the evaluated neighbour and other neighbouring devices.
-
-The implementation derives a non-negative correlation-related feature from available neighbour information.
-
-~~~text
-ρ >= 0
-~~~
-
-This component is particularly relevant when analysing coordinated or collusive behaviour.
-
----
-
-## 6. Reinforcement Learning Actions
-
-TrustAdaptRL uses three trust adaptation actions:
-
-~~~text
-+--------+---------------------------+
-| Action | Meaning                   |
-+--------+---------------------------+
-|   0    | Decrease Trust            |
-|   1    | Maintain Trust            |
-|   2    | Increase Trust            |
-+--------+---------------------------+
-~~~
-
-The reinforcement-learning agent observes:
-
-~~~text
-[B, C, S, H, ρ]
-~~~
-
-and selects one of the three actions.
-
----
-
-## 7. Trust Adaptation
-
-The framework maintains an initial trust value:
-
-~~~text
-initial_trust = 0.5
-~~~
-
-The trust adaptation magnitude is:
-
-~~~text
-trust_delta = 0.05
-~~~
-
-The trusted threshold is:
-
-~~~text
-trusted_threshold = 0.5
-~~~
-
-The conceptual trust adaptation process is:
-
-~~~text
-Action 0
-   |
-   v
-Decrease Trust
-
-Action 1
-   |
-   v
-Maintain Trust
-
-Action 2
-   |
-   v
-Increase Trust
-~~~
-
-The resulting trust value is used by the routing component.
-
----
-
-## 8. Attack Models
-
-TrustAdaptRL explicitly models:
-
-1. Grayhole attacks
-2. On-Off attacks
-3. Collusion attacks
-
-The framework also contains advanced robustness utilities for adaptive and coordinated malicious behaviours.
-
----
-
-## 9. Grayhole Attack
-
-A Grayhole node selectively drops packets rather than continuously behaving maliciously.
-
-The configured Grayhole drop probability is:
-
-~~~yaml
-grayhole_drop_probability: 0.45
-~~~
-
-The corresponding reward weight is:
-
-~~~yaml
-gray_weight: 0.7
-~~~
-
-The Grayhole threshold is:
-
-~~~yaml
-tau_gray: 0.10
-~~~
-
-The attack-aware reward uses these parameters to penalize routing decisions affected by suspicious packet-dropping behaviour.
-
----
-
-## 10. On-Off Attack
-
-An On-Off attacker alternates between benign and malicious behaviour.
-
-The configured malicious duty cycle is:
-
-~~~yaml
-onoff_malicious_duty_cycle: 0.50
-~~~
-
-The reward weight is:
-
-~~~yaml
-onoff_weight: 0.7
-~~~
-
-The threshold is:
-
-~~~yaml
-tau_onoff: 0.12
-~~~
-
-This allows the framework to evaluate whether adaptive trust can respond to intermittent malicious behaviour.
-
----
-
-## 11. Collusion Attack
-
-Collusion attacks involve groups of malicious devices that coordinate their behaviour.
-
-The configured collusion group size is:
-
-~~~yaml
-collusion_group_min: 3
-collusion_group_max: 5
-~~~
-
-The reward weight is:
-
-~~~yaml
-collusion_weight: 0.8
-~~~
-
-The threshold is:
-
-~~~yaml
-tau_collusion: 0.65
-~~~
-
-Neighbour correlation information supports the analysis of coordinated behaviour.
-
----
-
-## 12. Advanced Attack-Robustness Components
-
-Advanced attack mechanisms are implemented in:
-
-~~~text
-trustadaptrl/attacks/advanced.py
-~~~
-
-The implementation includes:
-
-~~~text
-RewardPoisoner
-AdaptiveGrayholeController
-CoordinatedSchedule
-~~~
-
-These components support experimentation with:
-
-- Reward manipulation
-- Adaptive Grayhole behaviour
-- Coordinated malicious schedules
-- More challenging attack conditions
-
----
-
-## 13. Attack Manager
-
-Attack assignment and dynamic attack behaviour are managed by:
-
-~~~text
-trustadaptrl/attacks/attack_manager.py
-~~~
-
-The attack manager:
-
-1. Selects malicious devices.
-2. Assigns attack categories.
-3. Creates collusion groups.
-4. Updates attack states.
-5. Supports dynamic attack behaviour during simulation.
-
-The default malicious-device ratio is:
-
-~~~yaml
-malicious_ratio: 0.20
-~~~
-
----
-
-## 14. Attack-Aware Reward
-
-TrustAdaptRL uses an attack-aware reward instead of relying only on packet forwarding success.
-
-The reward considers:
-
-- Packet Delivery Ratio (PDR)
-- Delay
-- Grayhole behaviour
-- On-Off behaviour
-- Collusion behaviour
-
-The reward configuration is:
-
-~~~yaml
-reward:
-  qos_pdr_weight: 1.0
-  qos_delay_weight: 0.35
-  gray_weight: 0.7
-  onoff_weight: 0.7
-  collusion_weight: 0.8
-  tau_gray: 0.10
-  tau_onoff: 0.12
-  tau_collusion: 0.65
-~~~
-
-The conceptual reward structure is:
-
-~~~text
-                  +------------------+
-                  | Packet Delivery  |
-                  | Ratio (PDR)      |
-                  +------------------+
-                           |
-                           v
-                  +------------------+
-                  | Delay            |
-                  +------------------+
-                           |
-                           v
-        +------------------+------------------+
-        |                  |                  |
-        v                  v                  v
-    Grayhole           On-Off            Collusion
-     Penalty           Penalty             Penalty
-        |                  |                  |
-        +------------------+------------------+
-                           |
-                           v
-                  Attack-Aware Reward
-~~~
-
----
-
-## 15. Reinforcement Learning Agents
-
-TrustAdaptRL provides two reinforcement-learning agents:
-
-~~~text
-1. Q-Learning
-2. Deep Q-Network (DQN)
-~~~
-
-Both agents use the same conceptual state representation and three trust adaptation actions.
-
----
-
-## 16. Q-Learning Agent
-
-Implementation:
-
-~~~text
-trustadaptrl/agents/qlearning_agent.py
-~~~
-
-The Q-learning agent uses:
-
-- Discretized state representation
-- Epsilon-greedy exploration
-- Q-table
-- Temporal-difference learning
-
-Default configuration:
-
-~~~yaml
-qlearning:
-  learning_rate: 0.10
-  gamma: 0.95
-  epsilon_start: 1.0
-  epsilon_min: 0.05
-  epsilon_decay: 0.995
-  bins: 3
-~~~
-
-The five-dimensional continuous state is discretized into bins before being used by the Q-table.
-
----
-
-## 17. Q-Learning Update
-
-The Q-learning update is:
-
-~~~text
-Q(s,a) <- Q(s,a) +
-          α [ r + γ max Q(s',a') - Q(s,a) ]
-~~~
-
-where:
-
-~~~text
-α = learning rate
-γ = discount factor
-r = reward
-s = current state
-a = selected action
-s' = next state
-~~~
-
----
-
-## 18. Deep Q-Network
-
-Implementation:
-
-~~~text
-trustadaptrl/agents/dqn_agent.py
-~~~
-
-The DQN uses a neural network to approximate the action-value function.
-
-Default architecture:
-
-~~~text
-Input
-  |
-  v
-5 State Features
-  |
-  v
-64 neurons
-  |
-  v
-64 neurons
-  |
-  v
-32 neurons
-  |
-  v
-3 Actions
-~~~
-
-Default configuration:
-
-~~~yaml
-dqn:
-  learning_rate: 0.001
-  gamma: 0.99
-  batch_size: 32
-  replay_capacity: 50000
-  target_update: 20
-  epsilon_start: 1.0
-  epsilon_min: 0.05
-  epsilon_decay: 0.995
-  hidden_layers: [64, 64, 32]
-~~~
-
-The DQN implementation uses:
-
-- PyTorch
-- Experience replay
-- Target network
-- Epsilon-greedy exploration
-- Mini-batch updates
-
----
-
-## 19. Trust-QoS-Security Routing
-
-The routing module is:
-
-~~~text
-trustadaptrl/routing/trust_qos_router.py
-~~~
-
-The routing score combines:
-
-- Trust
-- QoS
-- Security risk
-
-Default routing weights:
-
-~~~yaml
-routing:
-  trust_weight: 0.5
-  qos_weight: 0.35
-  risk_weight: 0.15
-~~~
-
-The routing score is:
-
-~~~text
-Score =
-    trust_weight × Trust
-  + qos_weight × QoS
-  - risk_weight × Risk
-~~~
-
-Therefore, a preferred neighbour should ideally provide:
-
-~~~text
-High Trust
-    +
-Good QoS
-    +
-Low Security Risk
-~~~
-
----
-
-## 20. Dynamic Fog-IoT Simulation
-
-The simulation framework is implemented under:
-
-~~~text
-trustadaptrl/simulation/
-~~~
-
-The simulation components include:
-
-~~~text
-device.py
-mobility.py
-topology.py
-environment.py
-~~~
-
-The environment models a clustered Fog-IoT network with configurable:
-
-- Number of clusters
-- Devices per cluster
-- Area dimensions
-- Communication range
-- Episode length
-- Observation window
-- Mobility fraction
-
----
-
-## 21. Default Simulation Configuration
-
-~~~yaml
-simulation:
-  clusters: 5
-  devices_per_cluster: 40
-  area_width: 500.0
-  area_height: 500.0
-  communication_range: 100.0
-  episode_steps: 1000
-  observation_window: 10
-  mobility_fraction: 0.5
-~~~
-
-This corresponds to:
-
-~~~text
-5 Fog clusters
-40 devices per cluster
-500 × 500 simulation area
-100 communication range
-1000 episode steps
-10-step observation window
-50% mobility fraction
-~~~
-
----
-
-## 22. Device Mobility
-
-Mobility is implemented in:
-
-~~~text
-trustadaptrl/simulation/mobility.py
-~~~
-
-Default mobility configuration:
-
-~~~yaml
-mobility:
-  min_speed: 0.5
-  max_speed: 2.0
-  pause_time: 5
-~~~
-
-The mobility model supports variable device movement with configurable speed and pause behaviour.
-
----
-
-## 23. Fog-Level Learning
-
-Fog-level learning is implemented in:
-
-~~~text
-trustadaptrl/fog/hierarchical.py
-~~~
-
-The main components include:
-
-~~~text
-ExperienceAggregator
-PolicySynchronizer
-CrossClusterTransfer
-~~~
-
-The workflow is:
-
-~~~text
-Local Device Experience
-          |
-          v
-Fog Cluster
-          |
-          v
-Experience Aggregation
-          |
-          v
+TrustAdaptRL
+GitHub Repository README
+TrustAdaptRL: An Online Reinforcement Learning Framework for Attack-Resilient Trust Management in Fog-IoT Networks
+
+TrustAdaptRL is a modular Python research framework for adaptive, attack-resilient trust management in Fog-enabled Internet of Things (Fog-IoT) networks. The framework combines reinforcement learning, attack-aware trust adaptation, Quality-of-Service-aware routing, fog-assisted hierarchical learning, cross-cluster policy transfer, and model-specific explainability.
+The implementation supports both tabular Q-learning and Deep Q-Networks (DQN) and evaluates trust-management performance under grayhole, on-off, collusion, adaptive, coordinated, and reward-poisoning attacks.
+The project follows a hybrid evaluation methodology in which public IoT security datasets provide realistic traffic and security characteristics, while Fog-IoT topology, neighbour relationships, packet-forwarding behaviour, trust states, and routing-specific adversarial behaviour are generated within a controlled simulation environment.
+Key Features
+•	Dynamic clustered Fog-IoT network simulation
+•	Public traffic integration using TON_IoT, BoT-IoT, and IoT-23
+•	Random Waypoint device mobility and dynamic neighbour discovery
+•	Packet-forwarding and QoS simulation
+•	Grayhole, on-off, collusion, adaptive, coordinated, and reward-poisoning attack scenarios
+•	Five-dimensional RL trust state representation
+•	Tabular Q-learning and PyTorch Deep Q-Network
+•	Experience replay and target-network synchronization
+•	Attack-aware reward shaping
+•	Factorized neighbour-wise trust adaptation
+•	Trust-QoS-security-aware next-hop routing
+•	Fog-assisted hierarchical training and cluster-level experience aggregation
+•	Policy synchronization and cross-cluster transfer learning
+•	Classical trust-management baselines
+•	Intrinsic Q-table explainability and SHAP/LIME-based DQN explainability
+•	Ablation, scalability, statistical-significance, and reproducibility support
+•	Automatic result logging and figure generation
+Framework Overview
+TON_IoT / BoT-IoT / IoT-23
+            |
+            v
+Traffic Preprocessing
+            |
+            v
+Traffic Observation Windows
+            |
+            v
+Dynamic Fog-IoT Simulator
+            |
+      +-----+------+
+      |            |
+      v            v
+Benign Nodes   Attack Injection
+               |-- Grayhole
+               |-- On-Off
+               |-- Collusion
+               |-- Adaptive
+               |-- Coordinated
+               `-- Reward Poisoning
+      |            |
+      +-----+------+
+            |
+            v
+Neighbour Observations
+            |
+            v
+State Construction
+[B, C, S, H, rho]
+            |
+            v
+TrustAdaptRL Agent
+ |-- Tabular Q-Learning
+ `-- Deep Q-Network
+            |
+            v
+Trust Adjustment
+            |
+            v
+Trust + QoS + Security Routing
+            |
+            v
+Experience Collection
+            |
+            v
 Fog-Level Training
-          |
-          v
+            |
+            v
 Policy Synchronization
-          |
-          v
-Cross-Cluster Transfer
-~~~
+            |
+            v
+Evaluation / Transfer / XAI / Statistics
+State Representation
+For device i evaluating neighbour j at time t, TrustAdaptRL constructs:
+s(i,j,t) = [B_j(t), C_j(t), S_j(t), H_j(t), rho_j(t)]
+•	B_j(t) = forwarding reliability
+•	C_j(t) = contextual network conditions
+•	S_j(t) = traffic-security evidence
+•	H_j(t) = temporal behavioural inconsistency
+•	rho_j(t) = cross-neighbour behavioural correlation
+This state is designed to distinguish benign network degradation from selective packet dropping, temporally adaptive attacks, and coordinated malicious behaviour.
+Reinforcement Learning Actions
+The RL agent applies one of three trust-adjustment actions independently to each candidate neighbour:
+0 -> Decrease Trust
+1 -> Maintain Trust
+2 -> Increase Trust
+Trust adaptation and routing are intentionally separated. First, the RL policy updates trust for each candidate neighbour. A second-stage routing module then selects the most suitable next hop using trust, QoS, and security information.
+Attack-Aware Reward
+TrustAdaptRL combines QoS performance with attack-specific penalties:
+Reward =
+    QoS Reward
+    - Grayhole Penalty
+    - On-Off Penalty
+    - Collusion Penalty
+A simplified implementation is:
+R_base = w1 * pdr - w2 * normalized_delay
 
----
+P_gray = max(
+    0.0,
+    expected_reliability - current_reliability - tau_gray
+)
 
-## 24. Policy Synchronization
+P_onoff = max(
+    0.0,
+    temporal_inconsistency - tau_onoff
+)
 
-Policy synchronization allows knowledge learned at Fog level to be shared across the hierarchical network.
+P_collusion = (
+    max(0.0, correlation - tau_collusion)
+    * security_evidence
+)
 
-Configuration:
+P_adv = (
+    lambda_gray * P_gray
+    + lambda_onoff * P_onoff
+    + lambda_collusion * P_collusion
+)
 
-~~~yaml
-fog:
-  sync_interval_windows: 20
-  train_updates_per_sync: 20
-~~~
-
-The synchronization process is controlled by:
-
-~~~text
-Synchronization Interval
-+
-Training Updates per Synchronization
-~~~
-
----
-
-## 25. Cross-Cluster Transfer
-
-The framework contains:
-
-~~~text
-CrossClusterTransfer
-~~~
-
-to support transfer of learned knowledge between Fog clusters.
-
-Conceptually:
-
-~~~text
-Cluster A
-   |
-   | Learned Policy
-   v
-Knowledge Transfer
-   |
-   v
-Cluster B
-   |
-   v
-Adapted Local Policy
-~~~
-
----
-
-## 26. Dataset Support
-
-TrustAdaptRL supports synthetic traffic and public IoT traffic.
-
-The dataset module is:
-
-~~~text
-trustadaptrl/datasets/
-~~~
-
-It contains:
-
-~~~text
-loaders.py
-preprocessing.py
-traffic_replay.py
-~~~
-
-Supported tabular formats include:
-
-~~~text
-CSV
-Parquet
-Pickle
-~~~
-
----
-
-## 27. Supported Public IoT Dataset Interfaces
-
-The repository provides loader interfaces for:
-
-~~~text
-TON-IoT
+reward = R_base - P_adv
+Fog-Assisted Hierarchical Learning
+TrustAdaptRL separates lightweight device-side inference from computationally intensive fog-side learning.
+IoT Device Responsibilities
+•	Local feature extraction
+•	RL state construction
+•	Trust-policy inference
+•	Neighbour trust adjustment
+•	Next-hop selection
+•	Experience generation
+Fog Node Responsibilities
+•	Experience aggregation
+•	Replay-buffer management
+•	Q-learning or DQN optimization
+•	Target-network synchronization
+•	Policy redistribution
+•	Cross-cluster policy sharing
+This design reduces computational requirements at constrained IoT devices while allowing devices within a cluster to benefit from collective learning.
+Supported RL Models
+Tabular Q-Learning
+Default configuration:
+Learning rate:     0.10
+Discount factor:   0.95
+Initial epsilon:   1.00
+Minimum epsilon:   0.05
+The continuous trust-state features are discretized into compact categorical states.
+Deep Q-Network
+The DQN is implemented using PyTorch. Typical architecture:
+Input: 5 state features
+        |
+Dense Layer
+        |
+ReLU
+        |
+Dense Layer
+        |
+ReLU
+        |
+Dense Layer
+        |
+ReLU
+        |
+Output: 3 Q-values
+Output:
+Q(Decrease Trust)
+Q(Maintain Trust)
+Q(Increase Trust)
+Default configuration:
+Optimizer:             Adam
+Learning rate:         1e-3
+Discount factor:       0.99
+Mini-batch size:       32
+Replay-buffer size:    50,000
+Target update:         Every 20 training steps
+Initial epsilon:       1.0
+Minimum epsilon:       0.05
+Public Datasets
+TON_IoT
+Used for realistic:
+•	IoT/IIoT traffic characteristics
+•	Telemetry behaviour
+•	Protocol patterns
+•	Temporal traffic variation
+•	Security indicators
 BoT-IoT
+Used primarily for high-volume adversarial traffic such as:
+•	DDoS
+•	DoS
+•	Scanning
+•	Data exfiltration
 IoT-23
-~~~
-
-The corresponding loader classes include:
-
-~~~text
-TONIoTLoader
-BoTIoTLoader
-IoT23Loader
-~~~
-
-These loaders use the common table-loading interface.
-
----
-
-## 28. Dataset Preprocessing
-
-The preprocessing pipeline supports common traffic features such as:
-
-~~~text
-packet_rate
-byte_rate
-mean_packet_size
-flow_duration
-inter_arrival
-traffic_intensity
-~~~
-
-The preprocessing workflow is:
-
-~~~text
-Raw Traffic
-    |
-    v
-Common Feature Extraction
-    |
-    v
-Numeric Projection
-    |
-    v
-Standardization
-    |
-    v
-Anomaly Detection
-    |
-    v
-RL Environment
-~~~
-
-The implementation uses:
-
-~~~text
-StandardScaler
-IsolationForest
-~~~
-
----
-
-## 29. Synthetic Traffic
-
-The project includes a synthetic-traffic fallback.
-
-This allows the framework to execute without first downloading a large public IoT dataset.
-
-~~~text
-No Dataset
-     |
-     v
-Synthetic Traffic
-     |
-     v
-Fog-IoT Environment
-     |
-     v
-RL Training
-~~~
-
----
-
-## 30. Dataset Usage
-
-A dataset can be passed to the training script using:
-
-~~~bash
-python train.py --dataset path/to/dataset.csv
-~~~
-
-The training pipeline performs a train/test-style split before fitting the preprocessing transformation.
-
-The workflow is:
-
-~~~text
-Dataset
-   |
-   v
-70% Training Portion
-   |
-   v
-Fit Preprocessor
-   |
-   v
-30% Evaluation Portion
-   |
-   v
-Transform Using Training Preprocessor
-~~~
-
----
-
-## 31. Explainability
-
-Explainability components are implemented under:
-
-~~~text
-trustadaptrl/explainability/
-~~~
-
-The framework provides explanation utilities for:
-
-- Q-table decisions
-- DQN decisions
-
-The implementation includes:
-
-~~~text
-Q-table explanation
-SHAP-based DQN explanation
-~~~
-
-The DQN explanation helper is:
-
-~~~text
-shap_dqn
-~~~
-
-This allows learned routing decisions to be investigated instead of treating the reinforcement-learning model as a complete black box.
-
----
-
-## 32. Baseline Methods
-
-Baseline implementations are available under:
-
-~~~text
-trustadaptrl/baselines/methods.py
-~~~
-
-The repository includes:
-
-~~~text
-StaticWeightedTrust
-BetaReputationTrust
-DempsterShaferTrust
-AnomalyThresholdTrust
-QoSOnlyRouting
-EigenTrustLite
-~~~
-
-These methods provide comparison points for evaluating TrustAdaptRL.
-
----
-
-## 33. Baseline Categories
-
-~~~text
-+----------------------------+------------------------------+
-| Baseline                   | Category                     |
-+----------------------------+------------------------------+
-| StaticWeightedTrust        | Weighted Trust               |
-| BetaReputationTrust        | Reputation-based Trust       |
-| DempsterShaferTrust        | Evidence-based Trust         |
-| AnomalyThresholdTrust      | Anomaly-based Trust          |
-| QoSOnlyRouting             | QoS-based Routing            |
-| EigenTrustLite             | Reputation / Network Trust   |
-+----------------------------+------------------------------+
-~~~
-
----
-
-## 34. Evaluation Metrics
-
-Evaluation utilities are implemented under:
-
-~~~text
-trustadaptrl/metrics/
-~~~
-
-The module contains:
-
-~~~text
-evaluation.py
-transfer_metrics.py
-efficiency.py
-~~~
-
-The framework supports evaluation of:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Convergence time
-- Paired statistical comparisons
-- Transfer performance
-- Computational efficiency
-
----
-
-## 35. Transfer Metrics
-
-Transfer-specific metrics are implemented in:
-
-~~~text
-trustadaptrl/metrics/transfer_metrics.py
-~~~
-
-These metrics support evaluation of knowledge transfer between Fog clusters and comparison of performance before and after transfer.
-
----
-
-## 36. Computational Efficiency
-
-The efficiency module is:
-
-~~~text
-trustadaptrl/metrics/efficiency.py
-~~~
-
-It provides measurement utilities for:
-
-~~~text
-Latency
-Memory usage
-CPU usage
-Estimated energy consumption
-~~~
-
----
-
-## 37. Statistical Analysis
-
-The evaluation utilities include paired statistical analysis.
-
-The reproduction workflow generates:
-
-~~~text
-paired_statistics.csv
-~~~
-
-This supports comparison of different methods across common experimental conditions.
-
----
-
-## 38. Experiment Scripts
-
-The repository contains:
-
-~~~text
-experiments/
-├── xai_demo.py
-├── transfer.py
-├── attack_specific.py
-├── baseline_comparison.py
-├── ablation.py
-└── statistics.py
-~~~
-
-These scripts correspond to different experimental aspects of TrustAdaptRL.
-
----
-
-## 39. XAI Demonstration
-
-The XAI demonstration is:
-
-~~~text
-experiments/xai_demo.py
-~~~
-
-The explainability workflow is:
-
-~~~text
-State Features
+Used for heterogeneous, temporally varying benign and malware-related IoT traffic patterns.
+Important Dataset Note
+The datasets are not treated as native trust-management datasets.
+They do not directly provide:
+•	Per-neighbour trust values
+•	Dynamic Fog-IoT routing topology
+•	Neighbour forwarding histories
+•	Routing-specific grayhole attacks
+•	Routing-specific on-off attacks
+•	Collusion trust attacks
+The public datasets provide realistic traffic characteristics, while the simulator independently generates:
+•	Topology
+•	Neighbour interactions
+•	Forwarding successes and failures
+•	Attack states
+•	Trust ground truth
+Traffic Security Evidence
+The security feature S_j(t) is supporting evidence, not the true trust label.
+Traffic Features
       |
       v
-Learned Policy
+Security / Anomaly Model
       |
       v
-Selected Action
+Probability or Anomaly Score
       |
       v
-Explanation
-~~~
-
----
-
-## 40. Transfer Experiment
-
-The transfer experiment is:
-
-~~~text
-experiments/transfer.py
-~~~
-
-The workflow is:
-
-~~~text
-Source Fog Cluster
-        |
-        v
-Learned Policy
-        |
-        v
-Transfer
-        |
-        v
-Target Fog Cluster
-        |
-        v
-Adaptation / Evaluation
-~~~
-
----
-
-## 41. Attack-Specific Experiment
-
-The attack-specific experiment is:
-
-~~~text
-experiments/attack_specific.py
-~~~
-
-It supports evaluation under:
-
-~~~text
+Normalized Security Evidence S_j(t)
+The native dataset attack label should not be directly supplied to the RL agent as trust ground truth.
+Attack Models
 Grayhole
+Grayhole nodes selectively drop packets while forwarding others normally. Typical drop probability:
+0.30 - 0.60
 On-Off
+On-off attackers alternate between benign and malicious behaviour. Default malicious duty cycle:
+50%
 Collusion
-~~~
+Collusion involves coordinated malicious neighbours. Typical group size:
+3 - 5 malicious devices
+The feature rho_j(t) is intended to capture cross-neighbour behavioural correlation.
+Reward Poisoning
+Optional experiments can corrupt rewards:
+poisoned_reward = -reward
+or:
+poisoned_reward = reward + noise
+Adaptive Attack
+Adaptive attackers modify malicious intensity based on their trust status:
+High trust
+   ->
+Increase malicious behaviour
 
----
+Low trust
+   ->
+Temporarily behave benignly
+Default Simulation Configuration
+Fog clusters:                   5
+Fog nodes per cluster:          1
+IoT devices per cluster:       40
+Total IoT devices:             200
 
-## 42. Baseline Comparison
+Area per cluster:               500 m x 500 m
+Communication range:           100 m
 
-The baseline comparison experiment is:
+Mobility model:                 Random Waypoint
+Mobility speed:                 0.5-2.0 m/s
+Pause time:                     5 s
 
-~~~text
-experiments/baseline_comparison.py
-~~~
+Episode length:                 1,000 time steps
+Observation window:             10 time steps
 
-It is used to compare TrustAdaptRL against the implemented baseline methods.
+Malicious-node ratios:
+0%
+10%
+20%
+33%
 
----
+Grayhole drop probability:
+0.30-0.60
 
-## 43. Ablation Study
+On-off malicious duty cycle:
+50%
 
-The ablation experiment is:
+Collusion group size:
+3-5 nodes
 
-~~~text
-experiments/ablation.py
-~~~
-
-The purpose is to evaluate the importance of individual components of the framework.
-
-Potential components include:
-
-~~~text
-Behavioural information
-Context information
-Security information
-Historical information
-Correlation information
-Attack-aware reward
-Trust component
-QoS component
-Security-risk component
-~~~
-
----
-
-## 44. Statistical Experiment
-
-The statistical experiment is:
-
-~~~text
-experiments/statistics.py
-~~~
-
-It supports statistical comparison of experimental results.
-
----
-
-## 45. Training
-
-The main training entry point is:
-
-~~~text
-train.py
-~~~
-
-Q-learning:
-
-~~~bash
-python train.py --agent qlearning
-~~~
-
-DQN:
-
-~~~bash
-python train.py --agent dqn
-~~~
-
-Training with a dataset:
-
-~~~bash
-python train.py --agent qlearning --dataset path/to/dataset.csv
-~~~
-
-DQN with a dataset:
-
-~~~bash
-python train.py --agent dqn --dataset path/to/dataset.csv
-~~~
-
----
-
-## 46. Training Arguments
-
-The main training arguments are:
-
-~~~text
---config
---agent
---dataset
---steps
---max-devices
---seed
-~~~
-
-Example:
-
-~~~bash
-python train.py --agent dqn --steps 1000 --max-devices 30 --seed 11
-~~~
-
----
-
-## 47. Evaluation
-
-The evaluation entry point is:
-
-~~~text
-evaluate.py
-~~~
-
-Example:
-
-~~~bash
-python evaluate.py path/to/results.csv
-~~~
-
----
-
-## 48. Complete Reproduction
-
-The complete reproduction script is:
-
-~~~text
-reproduce_all.py
-~~~
-
-The reproduction workflow evaluates multiple:
-
-~~~text
-Malicious ratios
-Random seeds
-RL methods
-~~~
-
-Malicious ratios:
-
-~~~text
-0.00
-0.10
-0.20
-0.33
-~~~
-
-Seeds:
-
-~~~text
-11
-22
-33
-44
-55
-~~~
-
-Methods:
-
-~~~text
-Q-Learning
-DQN
-~~~
-
----
-
-## 49. Reproduction Command
-
-Run:
-
-~~~bash
+Independent random seeds:
+5
+Repository Structure
+TrustAdaptRL/
+|
+|-- configs/
+|   |-- default.yaml
+|   |-- qlearning.yaml
+|   |-- dqn.yaml
+|   |-- attacks.yaml
+|   `-- experiments.yaml
+|
+|-- data/
+|   |-- raw/
+|   |   |-- ton_iot/
+|   |   |-- bot_iot/
+|   |   `-- iot23/
+|   |-- processed/
+|   `-- cache/
+|
+|-- trustadaptrl/
+|   |-- datasets/
+|   |-- simulation/
+|   |-- attacks/
+|   |-- features/
+|   |-- rewards/
+|   |-- agents/
+|   |-- routing/
+|   |-- baselines/
+|   |-- fog/
+|   |-- explainability/
+|   |-- metrics/
+|   `-- utils/
+|
+|-- experiments/
+|-- notebooks/
+|
+|-- outputs/
+|   |-- logs/
+|   |-- checkpoints/
+|   |-- tables/
+|   |-- figures/
+|   |-- explanations/
+|   `-- statistics/
+|
+|-- train.py
+|-- evaluate.py
+|-- reproduce_all.py
+|-- requirements.txt
+`-- README.md
+Installation
+Clone the repository:
+git clone https://github.com/your-username/TrustAdaptRL.git
+cd TrustAdaptRL
+Create a virtual environment:
+python -m venv venv
+Windows
+venv\Scripts\activate
+Linux/macOS
+source venv/bin/activate
+Install dependencies:
+pip install -r requirements.txt
+Quick Start
+The repository includes a synthetic traffic fallback, so the framework can be tested without downloading the public datasets.
+Run Q-learning:
+python train.py --agent qlearning --steps 100 --max-devices 40
+Run DQN:
+python train.py --agent dqn --steps 100 --max-devices 40
+Run the experimental pipeline:
 python reproduce_all.py
-~~~
-
-The reproduction workflow generates:
-
-~~~text
-outputs/tables/all_runs.csv
-outputs/tables/paired_statistics.csv
-~~~
-
----
-
-## 50. Output Files
-
-The repository contains interaction-log outputs such as:
-
-~~~text
-outputs/
-├── dqn_interaction_log.csv
-└── qlearning_interaction_log.csv
-~~~
-
-The complete reproduction workflow generates:
-
-~~~text
-outputs/tables/all_runs.csv
-outputs/tables/paired_statistics.csv
-~~~
-
----
-
-## 51. Interaction Logs
-
-Interaction logs record reinforcement-learning interaction information.
-
-The logged information includes state/action/reward/trust-related information generated during execution.
-
-Important fields include:
-
-~~~text
-B
-C
-S
-H
-rho
-reward
-trust_after
-~~~
-
----
-
-## 52. Configuration
-
-The main configuration file is:
-
-~~~text
-configs/default.yaml
-~~~
-
-The configuration contains:
-
-~~~text
-seed
-simulation
-mobility
-attacks
-state
-reward
-routing
-qlearning
-dqn
-fog
-evaluation
-~~~
-
----
-
-## 53. Complete Default Configuration
-
-~~~yaml
-seed: 11
-
+Running with Public Traffic Data
+Place the datasets under:
+data/raw/ton_iot/
+data/raw/bot_iot/
+data/raw/iot23/
+Example:
+python train.py     --agent dqn     --dataset data/raw/ton_iot/ton_iot.csv
+The preprocessing layer maps dataset-specific fields into a common traffic representation before their use by the simulator.
+Configuration
+Most experiment settings are controlled through YAML files. Example:
 simulation:
   clusters: 5
   devices_per_cluster: 40
-  area_width: 500.0
-  area_height: 500.0
-  communication_range: 100.0
+  area_width: 500
+  area_height: 500
+  communication_range: 100
   episode_steps: 1000
   observation_window: 10
-  mobility_fraction: 0.5
 
 mobility:
+  model: random_waypoint
   min_speed: 0.5
   max_speed: 2.0
   pause_time: 5
 
 attacks:
-  malicious_ratio: 0.20
-  grayhole_drop_probability: 0.45
-  onoff_malicious_duty_cycle: 0.50
-  collusion_group_min: 3
-  collusion_group_max: 5
+  malicious_ratios:
+    - 0.0
+    - 0.10
+    - 0.20
+    - 0.33
 
-state:
-  history_window: 10
-  context_smoothing: 0.7
-  additive_smoothing: 1.0
-  trust_delta: 0.05
-  initial_trust: 0.5
-  trusted_threshold: 0.5
+  grayhole:
+    drop_probability: 0.45
 
-reward:
-  qos_pdr_weight: 1.0
-  qos_delay_weight: 0.35
-  gray_weight: 0.7
-  onoff_weight: 0.7
-  collusion_weight: 0.8
-  tau_gray: 0.10
-  tau_onoff: 0.12
-  tau_collusion: 0.65
+  onoff:
+    malicious_duty_cycle: 0.50
 
-routing:
-  trust_weight: 0.5
-  qos_weight: 0.35
-  risk_weight: 0.15
+  collusion:
+    min_group: 3
+    max_group: 5
 
 qlearning:
   learning_rate: 0.10
   gamma: 0.95
-  epsilon_start: 1.0
-  epsilon_min: 0.05
-  epsilon_decay: 0.995
-  bins: 3
 
 dqn:
   learning_rate: 0.001
@@ -1572,971 +401,254 @@ dqn:
   batch_size: 32
   replay_capacity: 50000
   target_update: 20
+
+exploration:
   epsilon_start: 1.0
   epsilon_min: 0.05
-  epsilon_decay: 0.995
-  hidden_layers: [64, 64, 32]
-
-fog:
-  sync_interval_windows: 20
-  train_updates_per_sync: 20
 
 evaluation:
-  seeds: [11, 22, 33, 44, 55]
-  malicious_ratios: [0.0, 0.10, 0.20, 0.33]
-~~~
-
----
-
-## 54. Repository Structure
-
-The actual project structure is:
-
-~~~text
-TrustAdaptRL/
-│
-├── configs/
-│   └── default.yaml
-│
-├── experiments/
-│   ├── xai_demo.py
-│   ├── transfer.py
-│   ├── attack_specific.py
-│   ├── baseline_comparison.py
-│   ├── ablation.py
-│   └── statistics.py
-│
-├── tests/
-│   └── test_smoke.py
-│
-├── outputs/
-│   ├── dqn_interaction_log.csv
-│   └── qlearning_interaction_log.csv
-│
-├── trustadaptrl/
-│   │
-│   ├── __init__.py
-│   │
-│   ├── utils/
-│   │   ├── seed.py
-│   │   ├── config.py
-│   │   └── __init__.py
-│   │
-│   ├── fog/
-│   │   ├── hierarchical.py
-│   │   └── __init__.py
-│   │
-│   ├── explainability/
-│   │   ├── explainers.py
-│   │   └── __init__.py
-│   │
-│   ├── routing/
-│   │   ├── trust_qos_router.py
-│   │   └── __init__.py
-│   │
-│   ├── features/
-│   │   ├── state_builder.py
-│   │   └── __init__.py
-│   │
-│   ├── simulation/
-│   │   ├── device.py
-│   │   ├── mobility.py
-│   │   ├── topology.py
-│   │   ├── environment.py
-│   │   └── __init__.py
-│   │
-│   ├── attacks/
-│   │   ├── advanced.py
-│   │   ├── attack_manager.py
-│   │   └── __init__.py
-│   │
-│   ├── agents/
-│   │   ├── qlearning_agent.py
-│   │   ├── dqn_agent.py
-│   │   └── __init__.py
-│   │
-│   ├── datasets/
-│   │   ├── traffic_replay.py
-│   │   ├── preprocessing.py
-│   │   ├── loaders.py
-│   │   └── __init__.py
-│   │
-│   ├── rewards/
-│   │   ├── attack_aware_reward.py
-│   │   └── __init__.py
-│   │
-│   ├── metrics/
-│   │   ├── transfer_metrics.py
-│   │   ├── efficiency.py
-│   │   ├── evaluation.py
-│   │   └── __init__.py
-│   │
-│   └── baselines/
-│       ├── methods.py
-│       └── __init__.py
-│
-├── train.py
-├── evaluate.py
-├── reproduce_all.py
-└── IMPLEMENTATION_MANIFEST.md
-~~~
-
----
-
-## 55. Module Responsibilities
-
-~~~text
-+------------------------------+------------------------------------------+
-| Module                       | Responsibility                           |
-+------------------------------+------------------------------------------+
-| datasets/                    | Traffic loading and preprocessing        |
-| simulation/                  | Fog-IoT topology, devices, mobility      |
-| attacks/                     | Attack generation and robustness         |
-| features/                   | Five-dimensional state construction      |
-| rewards/                     | Attack-aware reward calculation          |
-| agents/                      | Q-learning and DQN                       |
-| routing/                     | Trust-QoS-security routing               |
-| fog/                         | Fog learning and policy transfer         |
-| baselines/                   | Comparison methods                        |
-| explainability/              | RL decision explanation                  |
-| metrics/                     | Evaluation and efficiency                |
-| experiments/                 | Research experiments                     |
-| utils/                       | Configuration and random seeds           |
-+------------------------------+------------------------------------------+
-~~~
-
----
-
-## 56. Implementation Manifest
-
-The repository contains:
-
-~~~text
-IMPLEMENTATION_MANIFEST.md
-~~~
-
-The implementation covers:
-
-~~~text
-1. Public traffic preparation
-2. Dynamic clustered Fog-IoT topology
-3. Mobility
-4. Grayhole attacks
-5. On-Off attacks
-6. Collusion attacks
-7. Advanced robustness helpers
-8. Five-part state representation
-9. Attack-aware reward
-10. Q-learning
-11. DQN
-12. Trust-QoS-security routing
-13. Fog policy synchronization
-14. Cross-cluster transfer
-15. Baselines
-16. Explainability
-17. Metrics
-18. Statistical analysis
-19. Computational efficiency
-20. Reproduction experiments
-~~~
-
----
-
-## 57. Testing
-
-The repository contains:
-
-~~~text
-tests/test_smoke.py
-~~~
-
-The smoke test validates the integration between:
-
-~~~text
-Configuration
-Synthetic Traffic
-Fog-IoT Environment
-Q-Learning Agent
-~~~
-
-Run:
-
-~~~bash
-pytest -q
-~~~
-
-Expected result:
-
-~~~text
-1 passed
-~~~
-
----
-
-## 58. Random Seed Management
-
-Seed handling is implemented in:
-
-~~~text
-trustadaptrl/utils/seed.py
-~~~
-
-Default seed:
-
-~~~yaml
-seed: 11
-~~~
-
-Evaluation seeds:
-
-~~~text
-11
-22
-33
-44
-55
-~~~
-
-Multiple seeds help reduce dependence on a single random initialization.
-
----
-
-## 59. Reproducibility
-
-TrustAdaptRL supports reproducible experiments through:
-
-- Configuration files
-- Explicit random seeds
-- Multiple evaluation seeds
-- Reproduction scripts
-- Interaction logging
-- Standardized evaluation
-
-Main reproduction command:
-
-~~~bash
-python reproduce_all.py
-~~~
-
----
-
-## 60. End-to-End Workflow
-
-~~~text
-                     START
-                       |
-                       v
-              Load Configuration
-                       |
-                       v
-             Load Public Dataset
-                    /     \
-                   /       \
-                  v         v
-             Dataset      Synthetic
-                  \         /
-                   \       /
-                    v     v
-               Preprocessing
-                       |
-                       v
-              Build Fog-IoT Network
-                       |
-                       v
-                Device Mobility
-                       |
-                       v
-                Attack Injection
-                       |
-                       v
-               Observe Neighbours
-                       |
-                       v
-             Build State [B,C,S,H,ρ]
-                       |
-                       v
-              Select RL Action
-                  /    |    \
-                 /     |     \
-                v      v      v
-           Decrease  Maintain Increase
-             Trust     Trust     Trust
-                \       |       /
-                 \      |      /
-                  v     v     v
-                Calculate Reward
-                       |
-                       v
-             Update RL Policy
-                  /        \
-                 v          v
-            Q-Learning      DQN
-                 \          /
-                  \        /
-                   v      v
-              Routing Decision
-                       |
-                       v
-              Fog-Level Learning
-                       |
-                       v
-             Policy Synchronization
-                       |
-                       v
-             Cross-Cluster Transfer
-                       |
-                       v
-          Evaluation / XAI / Statistics
-                       |
-                       v
-                      END
-~~~
-
----
-
-## 61. Research Evaluation Dimensions
-
-### Security
-
-~~~text
-Grayhole resilience
-On-Off attack resilience
-Collusion resilience
-Anomaly awareness
-~~~
-
-### Routing
-
-~~~text
-Trust-aware routing
-QoS-aware routing
-Security-aware routing
-Adaptive next-hop selection
-~~~
-
-### Learning
-
-~~~text
-Q-learning
-DQN
-Convergence
-Policy adaptation
-~~~
-
-### Transfer
-
-~~~text
-Fog-level learning
-Policy synchronization
-Cross-cluster transfer
-~~~
-
-### Explainability
-
-~~~text
-Q-table explanations
-SHAP-based DQN explanations
-~~~
-
-### Efficiency
-
-~~~text
-Latency
-CPU
-Memory
-Estimated energy
-~~~
-
----
-
-## 62. Proposed Framework Summary
-
-TrustAdaptRL integrates:
-
-~~~text
-                 TrustAdaptRL
-                      |
-       +--------------+--------------+
-       |              |              |
-       v              v              v
-    Trust            QoS          Security
-       |              |              |
-       +--------------+--------------+
-                      |
-                      v
-             Five-Dimensional State
-                  [B,C,S,H,ρ]
-                      |
-                      v
-             Attack-Aware Reward
-                      |
-                      v
-          Reinforcement Learning
-             /              \
-            v                v
-       Q-Learning            DQN
-            \                /
-             \              /
-              v            v
-              Adaptive Routing
-                      |
-                      v
-               Fog-Level Learning
-                      |
-                      v
-              Policy Synchronization
-                      |
-                      v
-              Cross-Cluster Transfer
-                      |
-                      v
-              Explainable Decisions
-                      |
-                      v
-           Statistical Evaluation
-~~~
-
----
-
-## 63. Installation
-
-Create a Python virtual environment:
-
-~~~bash
-python -m venv .venv
-~~~
-
-### Windows
-
-~~~bash
-.venv\Scripts\activate
-~~~
-
-### Linux / macOS
-
-~~~bash
-source .venv/bin/activate
-~~~
-
-Install the required Python packages used by the project:
-
-~~~bash
-pip install numpy pandas pyyaml scikit-learn torch pytest shap
-~~~
-
----
-
-## 64. Quick Start
-
-Run Q-learning:
-
-~~~bash
-python train.py --agent qlearning
-~~~
-
-Run DQN:
-
-~~~bash
-python train.py --agent dqn
-~~~
-
-Specify training steps:
-
-~~~bash
-python train.py --agent dqn --steps 1000
-~~~
-
-Limit simulated devices:
-
-~~~bash
-python train.py --agent dqn --max-devices 30
-~~~
-
-Specify a seed:
-
-~~~bash
-python train.py --agent dqn --seed 11
-~~~
-
----
-
-## 65. Dataset-Based Quick Start
-
-For a supported IoT dataset:
-
-~~~bash
-python train.py --agent dqn --dataset path/to/dataset.csv --steps 1000
-~~~
-
-The workflow is:
-
-~~~text
-Load Dataset
-     |
-     v
-Preprocess Traffic
-     |
-     v
-Build Environment
-     |
-     v
-Run DQN
-     |
-     v
-Generate Interaction Log
-~~~
-
----
-
-## 66. Complete Experiment Execution
-
-Run:
-
-~~~bash
-python reproduce_all.py
-~~~
-
-The workflow evaluates:
-
-~~~text
-Methods:
-    Q-Learning
-    DQN
-
-Malicious Ratios:
-    0.00
-    0.10
-    0.20
-    0.33
-
-Seeds:
-    11
-    22
-    33
-    44
-    55
-~~~
-
----
-
-## 67. Research Contributions
-
-The implementation provides an integrated framework combining:
-
-1. Multi-dimensional trust representation.
-2. Attack-aware reinforcement learning.
-3. Dynamic Fog-IoT simulation.
-4. Mobility-aware network modelling.
-5. Grayhole attack modelling.
-6. On-Off attack modelling.
-7. Collusion attack modelling.
-8. Trust-QoS-security routing.
-9. Q-learning-based trust adaptation.
-10. DQN-based trust adaptation.
-11. Fog-level policy synchronization.
-12. Cross-cluster policy transfer.
-13. Explainable reinforcement-learning decisions.
-14. Multiple trust and routing baselines.
-15. Statistical comparison.
-16. Computational efficiency analysis.
-17. Reproducible multi-seed evaluation.
-
----
-
-## 68. Important Design Principles
-
-### Multi-Dimensional Trust
-
-Trust is represented using:
-
-~~~text
-Trust State = [B, C, S, H, ρ]
-~~~
-
-rather than relying on a single behavioural measurement.
-
-### Attack Awareness
-
-The reward explicitly incorporates attack-related penalties:
-
-~~~text
-Normal QoS
-     +
-Security Awareness
-     +
-Attack Penalties
-     =
-Attack-Aware Learning
-~~~
-
-### Adaptive Decision Making
-
-~~~text
-Observe
-   |
-   v
-Evaluate
-   |
-   v
-Learn
-   |
-   v
-Adapt
-   |
-   v
-Route
-~~~
-
-### Fog-Level Intelligence
-
-~~~text
-Local Experience
-      |
-      v
-Fog Aggregation
-      |
-      v
-Policy Synchronization
-      |
-      v
-Cross-Cluster Transfer
-~~~
-
----
-
-## 69. Limitations and Scope
-
-The repository provides a research implementation and experimental framework.
-
-The implementation includes a synthetic-traffic fallback so that the main framework can be executed without requiring an external dataset.
-
-When public IoT datasets are used, they should be converted into a supported tabular representation and their traffic attributes should be mapped to the preprocessing pipeline.
-
-Experimental results depend on:
-
-~~~text
-Dataset
-+
-Dataset Preprocessing
-+
-Simulation Configuration
-+
-Attack Configuration
-+
-Random Seed
-+
-RL Configuration
-~~~
-
----
-
-## 70. Reproducibility Checklist
-
-Before reporting experimental results, record:
-
-~~~text
-[ ] Dataset
-[ ] Dataset preprocessing
-[ ] Random seed
-[ ] Number of Fog clusters
-[ ] Devices per cluster
-[ ] Communication range
-[ ] Mobility parameters
-[ ] Malicious-device ratio
-[ ] Attack type
-[ ] Attack parameters
-[ ] RL algorithm
-[ ] RL hyperparameters
-[ ] Reward configuration
-[ ] Routing weights
-[ ] Fog synchronization interval
-[ ] Transfer configuration
-[ ] Number of evaluation runs
-~~~
-
----
-
-## 71. Recommended Experiment Matrix
-
-~~~text
-                 Attack Ratio
-              0%   10%   20%   33%
-               |    |     |     |
-               v    v     v     v
-           +------------------------+
-           | Q-Learning             |
-           +------------------------+
-                      |
-                      v
-           +------------------------+
-           | DQN                    |
-           +------------------------+
-                      |
-                      v
-           +------------------------+
-           | Baselines              |
-           +------------------------+
-                      |
-                      v
-           +------------------------+
-           | Statistical Analysis   |
-           +------------------------+
-                      |
-                      v
-           +------------------------+
-           | Efficiency Analysis    |
-           +------------------------+
-~~~
-
----
-
-## 72. Comparison Framework
-
-The proposed methods can be compared against:
-
-~~~text
-TrustAdaptRL-Q-Learning
-TrustAdaptRL-DQN
-StaticWeightedTrust
-BetaReputationTrust
-DempsterShaferTrust
-AnomalyThresholdTrust
-QoSOnlyRouting
-EigenTrustLite
-~~~
-
-Comparison dimensions include:
-
-~~~text
-Accuracy
-Precision
-Recall
-F1-score
-Convergence
-Transfer Performance
-Latency
-Memory
-CPU
-Estimated Energy
-~~~
-
----
-
-## 73. Project Status
-
-The repository contains an executable research implementation covering:
-
-~~~text
-✓ Dynamic Fog-IoT simulation
-✓ Device mobility
-✓ Multiple attack models
-✓ Five-dimensional state construction
-✓ Attack-aware reward
-✓ Q-learning
-✓ DQN
-✓ Trust-QoS-security routing
-✓ Fog-level learning
-✓ Policy synchronization
-✓ Cross-cluster transfer
-✓ Baseline methods
-✓ Explainability
-✓ Evaluation metrics
-✓ Efficiency metrics
-✓ Statistical analysis
-✓ Reproduction scripts
-✓ Smoke testing
-~~~
-
----
-
-## 74. Citation
-
-If this repository is used in academic research, cite the corresponding TrustAdaptRL research work.
-
-Add the final publication metadata when available:
-
-~~~bibtex
-@article{trustadaptrl,
-  title   = {TrustAdaptRL: Attack-Aware Trust and Reinforcement Learning for Dynamic Fog-IoT Routing},
-  author  = {Author Name},
-  journal = {Journal Name},
-  year    = {2026},
-  volume  = {},
-  number  = {},
-  pages   = {},
-  doi     = {}
-}
-~~~
-
----
-
-## 75. License
-
-Add the project license information according to the license selected for the repository.
-
-For example:
-
-~~~text
-This project is intended for research and academic purposes.
-Please refer to the LICENSE file for the applicable terms and conditions.
-~~~
-
----
-
-## 76. Acknowledgement
-
-This repository uses concepts and technologies from:
-
-~~~text
-Fog Computing
-Internet of Things
+  seeds:
+    - 11
+    - 22
+    - 33
+    - 44
+    - 55
+Baseline Methods
+TrustAdaptRL includes representative comparison methods:
+•	Static Weighted Trust
+•	Beta-Reputation Trust
+•	EigenTrust
+•	Dempster-Shafer Trust
+•	Anomaly Detection + Trust Threshold
+•	QoS-Only Routing
+For fair evaluation, all methods should use identical topology, traffic replay, attack schedules, malicious-node selection, random seeds, and evaluation metrics.
+Evaluation Metrics
 Trust Management
-Reinforcement Learning
-Deep Reinforcement Learning
-Network Security
-Anomaly Detection
-QoS-aware Routing
-Explainable Artificial Intelligence
-~~~
-
----
-
-## 77. Final Summary
-
-TrustAdaptRL provides an integrated research framework for adaptive and attack-aware trust management and routing in dynamic Fog-IoT networks.
-
-The framework combines:
-
-~~~text
-Dynamic Fog-IoT Simulation
-            +
-Mobility
-            +
-Trust Representation
-            +
-Security / Anomaly Detection
-            +
-Attack Modelling
-            +
-Attack-Aware Reward
-            +
-Q-Learning
-            +
-DQN
-            +
-QoS-Aware Routing
-            +
-Fog-Level Learning
-            +
-Policy Synchronization
-            +
-Cross-Cluster Transfer
-            +
-Explainable AI
-            +
-Baseline Comparison
-            +
-Statistical Analysis
-            +
-Efficiency Evaluation
-~~~
-
-The central state representation is:
-
-~~~text
-s(i,j,t) = [B_ij(t), C_ij(t), S_ij(t), H_ij(t), ρ_ij(t)]
-~~~
-
-The reinforcement-learning actions are:
-
-~~~text
-0 → Decrease Trust
-1 → Maintain Trust
-2 → Increase Trust
-~~~
-
-The routing decision combines trust, QoS, and security risk:
-
-~~~text
-Routing Score =
-    Trust Contribution
-  + QoS Contribution
-  - Security Risk Contribution
-~~~
-
-The complete framework workflow is:
-
-~~~text
-IoT Traffic
-    |
-    v
-Preprocessing
-    |
-    v
-Dynamic Fog-IoT Network
-    |
-    v
-Mobility
-    |
-    v
-Attack Modelling
-    |
-    v
-State [B,C,S,H,ρ]
-    |
-    v
-Attack-Aware Reward
-    |
-    v
-Q-Learning / DQN
-    |
-    v
-Trust Adaptation
-    |
-    v
-Trust-QoS-Security Routing
-    |
-    v
-Fog-Level Training
-    |
-    v
-Policy Synchronization
-    |
-    v
-Cross-Cluster Transfer
-    |
-    v
-XAI
-    |
-    v
-Baseline Comparison
-    |
-    v
-Statistical Analysis
-    |
-    v
-Efficiency Evaluation
-    |
-    v
-Reproducible Results
-~~~
-
----
-
-# TrustAdaptRL
-
-~~~text
-Adaptive Trust
-      +
-QoS Awareness
-      +
-Security Awareness
-      +
-Reinforcement Learning
-      +
-Fog-Level Intelligence
-      +
+•	Trust Accuracy
+•	Precision
+•	Recall
+•	F1-Score
+•	False Positive Rate
+•	False Negative Rate
+Attack Resilience
+•	Grayhole Detection Rate
+•	On-Off Detection Rate
+•	Collusion Detection Rate
+•	Adaptive Attack Detection Rate
+•	Coordinated Attack Detection Rate
+Quality of Service
+•	Packet Delivery Ratio
+•	End-to-End Latency
+•	Throughput
+•	Jitter
+Trust Stability
+•	Temporal trust variance
+•	Convergence time
+•	Trust trajectory
+Default convergence criterion:
+Trust-change tolerance = 0.01
+Consecutive stable windows = 5
+Computational Efficiency
+•	Decision latency
+•	Inference latency
+•	CPU utilization
+•	Memory consumption
+•	Simulated energy per decision
+•	Fog offloading latency
+•	Fog training time
+Cross-Cluster Generalization
+Compare:
+Training from Scratch
+        vs.
+Transferred Policy Initialization
+•	Transfer accuracy
+•	Convergence steps
+•	Retraining-time reduction
 Explainability
-      =
-TrustAdaptRL
-~~~
+Q-Learning
+Tabular Q-learning is interpreted intrinsically using:
+•	Current state
+•	Available actions
+•	Q-values
+•	Selected action
+•	Reward components
+•	Trust before action
+•	Trust after action
+DQN
+SHAP is used as the primary DQN explanation method. Features analyzed:
+B -> Behavioural Reliability
+C -> Context
+S -> Security Evidence
+H -> Temporal Inconsistency
+rho -> Cross-Neighbour Correlation
+LIME can additionally be used for representative local explanations.
+Ablation Studies
+Supported variants can include:
+Full TrustAdaptRL
+TrustAdaptRL without Context C
+TrustAdaptRL without Security Evidence S
+TrustAdaptRL without Temporal Feature H
+TrustAdaptRL without Correlation rho
+TrustAdaptRL without Attack-Aware Penalties
+TrustAdaptRL with QoS-Only Reward
+TrustAdaptRL without Fog-Level Aggregation
+Scalability Experiments
+Typical network sizes:
+50 devices
+100 devices
+200 devices
+300 devices
+500 devices
+Measure:
+•	Decision latency
+•	DQN inference time
+•	Fog training cost
+•	CPU usage
+•	Memory usage
+•	Throughput
+•	Detection performance
+Statistical Evaluation
+Principal experiments should be repeated over multiple independent seeds. Recommended reporting:
+•	Mean
+•	Standard Deviation
+•	95% Confidence Interval
+•	Paired t-test
+•	Wilcoxon Signed-Rank Test
+•	Cohen's d_z
+Statistical tests should use per-seed values rather than aggregated means.
+Reproducibility
+The framework records:
+•	Configuration files
+•	Random seeds
+•	Topology configuration
+•	Attack parameters
+•	Dataset replay order
+•	RL hyperparameters
+•	Model checkpoints
+•	Trust trajectories
+•	Per-run metrics
+•	Statistical results
+Typical output structure:
+outputs/
+|
+|-- logs/
+|-- checkpoints/
+|-- tables/
+|-- figures/
+|-- explanations/
+`-- statistics/
+Typical output files:
+overall_metrics.csv
+attack_metrics.csv
+qos_metrics.csv
+stability_metrics.csv
+efficiency_metrics.csv
+transfer_metrics.csv
+ablation_results.csv
+sensitivity_results.csv
+statistical_tests.csv
+Typical Visualizations
+•	Trust accuracy comparisons
+•	Attack-specific detection rates
+•	Packet delivery ratio comparisons
+•	Latency comparisons
+•	Trust evolution curves
+•	Q-learning convergence curves
+•	DQN loss curves
+•	Reward evolution curves
+•	Scalability analysis
+•	Malicious-node-ratio sensitivity
+•	Cross-cluster transfer results
+•	Ablation plots
+•	SHAP feature-importance plots
+•	Temporal attribution plots
+•	Trust stability plots
+Recommended Experimental Workflow
+1.	Validate dataset preprocessing
+2.	Validate topology and mobility
+3.	Validate packet forwarding and QoS
+4.	Validate grayhole attacks
+5.	Validate on-off attacks
+6.	Validate collusion attacks
+7.	Validate B, C, S, H, and rho features
+8.	Validate attack-aware reward
+9.	Run static trust baselines
+10.	Train Q-learning
+11.	Train DQN
+12.	Perform baseline comparison
+13.	Evaluate individual attacks
+14.	Vary malicious-node proportion
+15.	Test adaptive and poisoning attacks
+16.	Perform scalability analysis
+17.	Perform ablation analysis
+18.	Perform cross-cluster transfer
+19.	Generate explainability results
+20.	Perform multi-seed statistical testing
+Important Experimental Considerations
+Avoid Trust-Label Leakage
+Do not use:
+security_evidence = true_attack_label
+Instead, S_j(t) should come from imperfect traffic-derived security or anomaly evidence. Simulator attack states should be reserved for evaluation ground truth.
+Validate Attacks Before Training
+Confirm that:
+Grayhole
+    -> forwarding reliability decreases
+
+On-Off
+    -> temporal inconsistency increases
+
+Collusion
+    -> cross-neighbour correlation increases
+Keep Train and Test Scenarios Separate
+Training and testing should use distinct:
+•	Attack schedules
+•	Topology realizations
+•	Traffic windows
+•	Replay order
+•	Target clusters
+Dependencies
+Major packages include:
+Python
+NumPy
+Pandas
+PyTorch
+Scikit-learn
+NetworkX
+Gymnasium
+SciPy
+Statsmodels
+Matplotlib
+SHAP
+LIME
+PyYAML
+psutil
+See requirements.txt for the complete dependency specification.
+Hardware
+The framework is software-based and does not require physical IoT devices or fog hardware. A GPU is recommended for large DQN experiments but is not mandatory for Q-learning or small-scale validation.
+Research Scope
+•	Fog-IoT security
+•	Adaptive trust management
+•	Reinforcement-learning-based cybersecurity
+•	Attack-resilient routing
+•	Explainable reinforcement learning
+•	Distributed intelligence
+•	Fog-assisted machine learning
+•	Non-stationary adversarial environments
+•	Trust-aware network optimization
+Citation
+If you use this implementation in academic work, cite the corresponding TrustAdaptRL research paper.
+@article{TrustAdaptRL,
+  title   = {TrustAdaptRL: An Online Reinforcement Learning Framework for Attack-Resilient Trust Management in Fog-IoT Networks},
+  author  = {Authors},
+  journal = {Journal},
+  year    = {Year}
+}
+Replace the placeholder publication information after the paper is formally published.
+License
+Add the license selected for the repository, such as:
+MIT License
+Apache License 2.0
+BSD 3-Clause License
+Disclaimer
+This repository is intended primarily for academic research and experimental evaluation. The Fog-IoT environment, routing-specific attacks, neighbour interactions, and trust labels are simulated under controlled conditions. Public network-security datasets are used to provide realistic traffic characteristics and should not be interpreted as containing native Fog-IoT trust-management annotations.
+Results from the framework therefore represent controlled, public-traffic-driven Fog-IoT simulation experiments and should not automatically be interpreted as equivalent to performance in physical production deployments.
