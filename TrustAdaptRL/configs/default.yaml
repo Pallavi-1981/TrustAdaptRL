@@ -1,0 +1,63 @@
+seed: 11
+simulation:
+  clusters: 5
+  devices_per_cluster: 40
+  area_width: 500.0
+  area_height: 500.0
+  communication_range: 100.0
+  episode_steps: 1000
+  observation_window: 10
+  mobility_fraction: 0.5
+mobility:
+  min_speed: 0.5
+  max_speed: 2.0
+  pause_time: 5
+attacks:
+  malicious_ratio: 0.20
+  grayhole_drop_probability: 0.45
+  onoff_malicious_duty_cycle: 0.50
+  collusion_group_min: 3
+  collusion_group_max: 5
+state:
+  history_window: 10
+  context_smoothing: 0.7
+  additive_smoothing: 1.0
+  trust_delta: 0.05
+  initial_trust: 0.5
+  trusted_threshold: 0.5
+reward:
+  qos_pdr_weight: 1.0
+  qos_delay_weight: 0.35
+  gray_weight: 0.7
+  onoff_weight: 0.7
+  collusion_weight: 0.8
+  tau_gray: 0.10
+  tau_onoff: 0.12
+  tau_collusion: 0.65
+routing:
+  trust_weight: 0.5
+  qos_weight: 0.35
+  risk_weight: 0.15
+qlearning:
+  learning_rate: 0.10
+  gamma: 0.95
+  epsilon_start: 1.0
+  epsilon_min: 0.05
+  epsilon_decay: 0.995
+  bins: 3
+dqn:
+  learning_rate: 0.001
+  gamma: 0.99
+  batch_size: 32
+  replay_capacity: 50000
+  target_update: 20
+  epsilon_start: 1.0
+  epsilon_min: 0.05
+  epsilon_decay: 0.995
+  hidden_layers: [64, 64, 32]
+fog:
+  sync_interval_windows: 20
+  train_updates_per_sync: 20
+evaluation:
+  seeds: [11, 22, 33, 44, 55]
+  malicious_ratios: [0.0, 0.10, 0.20, 0.33]
