@@ -901,9 +901,7 @@ If you use this implementation in academic work, cite the corresponding TrustAda
 ```bibtex
 @article{TrustAdaptRL,
   title = {TrustAdaptRL: An Online Reinforcement Learning Framework for Attack-Resilient Trust Management in Fog-IoT Networks},
-  author = {Authors},
-  journal = {Journal},
-  year = {Year}
+  year = {2026}
 }
 ```
 
@@ -924,6 +922,5 @@ BSD 3-Clause License
 This repository is intended primarily for academic research and experimental evaluation. The Fog-IoT environment, routing-specific attacks, neighbour interactions, and trust labels are simulated under controlled conditions. Public network-security datasets are used to provide realistic traffic characteristics and should not be interpreted as containing native Fog-IoT trust-management annotations.
 
 Results from the framework therefore represent controlled, public-traffic-driven Fog-IoT simulation experiments and should not automatically be interpreted as equivalent to performance in physical production deployments.
-
-```
+\
 ```
